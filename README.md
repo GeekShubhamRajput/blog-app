@@ -1,2 +1,3 @@
 # Blog Application
-## test
+## Problem Statement
+ Emma is a writer. Most of the times when she writes, she changes the content with a new version and many more versions take over. She writes in a text file and used to erase all previous versions and keep the current version. But at times, she would feel that one of her previous versions was better and had wished to be able to revert to it. She had been very impressed with the github and wishes to have something similar and a very basic one for her needs. 
