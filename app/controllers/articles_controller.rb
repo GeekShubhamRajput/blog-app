@@ -1,5 +1,5 @@
 class ArticlesController < ApplicationController
-  before_action :set_article, only: %i[ show edit update destroy ]
+  before_action :set_article, only: %i[ show edit update destroy versions version revert]
 
   # GET /articles or /articles.json
   def index
@@ -56,6 +56,42 @@ class ArticlesController < ApplicationController
     end
   end
 
+  def versions
+    @articles = @article.versions.uniq
+  end
+
+  def revert
+    @version = PaperTrail::Version.find_by(item_id: @article, id: params[:version_id])
+    @reverted_article = @version.reify
+    if @reverted_article.save
+      redirect_to @article, notice: "Article was successfully reverted."
+    else
+      render version
+    end
+  end
+
+  def deleted
+    @destroyed_versions = PaperTrail::Version.where(item_type: "Article", event: "destroy").order(created_at: :desc)
+    @latest_destroyed_versions = @destroyed_versions.filter { |v| v.reify.versions.last.event == "destroy" }.map(&:reify).uniq(&:id)
+    @articles = @latest_destroyed_versions
+  end
+
+  def restore
+    @latest_version = Article.new(id: params[:id]).versions.last
+    if @latest_version.event == "destroy"
+      @article = @latest_version.reify
+      if @article.save
+        redirect_to @article, notice: "Article was successfully restored."
+      else
+        render "deleted"
+      end
+    end
+  end
+
+  def version
+    @version = PaperTrail::Version.find_by(item_id: @article, id: params[:version_id])
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
@@ -66,4 +102,5 @@ class ArticlesController < ApplicationController
     def article_params
       params.require(:article).permit(:title, :body)
     end
+    
 end

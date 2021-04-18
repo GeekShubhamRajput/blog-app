@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Articles</h1>
+<h1>Deleted Articles</h1>
 
 <table>
   <thead>
@@ -12,10 +12,10 @@
   </thead>
 
   <tbody>
-    <%= render @articles %>
+    <%= render partial: "article", collection: @articles %>
   </tbody>
 </table>
 
 <br>
 
-<%= link_to 'New Article', new_article_path %>
+<%= link_to 'Back', articles_path %>
